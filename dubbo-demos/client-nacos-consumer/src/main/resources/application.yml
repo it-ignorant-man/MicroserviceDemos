@@ -1,0 +1,40 @@
+server:
+  port: 18080
+
+spring:
+  application:
+    name: client-nacos-consumer
+  zipkin:
+    base-url: http://192.168.2.120:9411
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1.0                    # 采样率
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.3.161:30795  # nacos服务注册中心的地址
+        namespace: trade-yk-1216          # 命名空间
+      config:
+        server-addr: 192.168.3.161:30795  # nacos配置中心地址
+        namespace: trade-yk-1216
+        file-extension: yaml              # 配置文件的后缀名
+        refresh-enabled: true             # 默 认true：自动刷新
+
+dubbo:
+  protocol:
+    port: -1
+    name: dubbo
+  registry:
+    # dubbo 服务注册端口，注册中心服务器地址，如果地址没有端口缺省为9090，同一集群内的多个地址用逗号分隔，如：ip:port,ip:port
+    # 其中前缀spring-cloud说明：挂载到 Spring Cloud注册中心
+    address: spring-cloud://192.168.3.161:30795
+    # check: false  #关闭注册中心是否启动的相关检查,false表示不检查注册中心是否启动，就不会报错
+  cloud:
+    subscribed-services: client-nacos-provider
+  consumer:
+    check: false                           # 关闭订阅服务是否启动的检查【检查时，没有服务提供者会报错】
+    filter: tracing

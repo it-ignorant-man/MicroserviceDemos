@@ -1,0 +1,34 @@
+server:
+  port: 9003
+
+spring:
+  application:
+    name: demo-hystrix-dashboard
+
+eureka:
+  instance:
+    hostname: demo-hystrix-dashboard
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /
+
+hystrix:
+  dashboard:
+    proxy-stream-allow-list: "*"
+
+turbine:
+  appConfig: client-eureka-consumer
+  clusterNameExpression: new String("default")
+  aggregator:
+    clusterConfig: default
+

@@ -1,0 +1,43 @@
+server:
+  port: 8865
+
+eureka:
+  instance:
+    hostname: demo-gateway-server
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+spring:
+  application:
+    name: demo-gateway-server
+  cloud:
+    # Spring Cloud Gateway 配置项，对应 GatewayProperties 类
+    gateway:
+      # 路由配置项，对应 RouteDefinition 数组
+      routes:
+        - id: testService                   # 路由的编号
+          uri: http://www.taobao.com        # 路由到的目标地址,可以是url或者微服务名称
+          predicates:                       # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+            - Path=/blog
+          filters:
+            - StripPrefix=1
+        - id: oschina                       # 路由的编号
+          uri: https://www.oschina.net      # 路由的目标地址
+          predicates:                       # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
+            - Path=/oschina
+          filters:                          # 过滤器，对请求进行拦截，实现自定义的功能，对应 FilterDefinition 数组
+            - StripPrefix=1
+        - id: client-consumer
+          uri: lb://client-eureka-consumer  # lb:// 表示从注册中心获取服务
+          predicates:
+            - Path=/client-consumer/**
+          filters:
+            - StripPrefix=0
+      discovery:
+        locator:
+          enabled: true             # 新加了服务的时候，不用去配置路由规则和重启网关  http://网关地址/服务名称（大写）/**
+          lowerCaseServiceId: true  # 大写的名称还是有很大的影响，如果我们从Zull升级到Spring Cloud Gateway的话意味着请求地址有改变，或者重新配置每个服务的路由地址，通过源码我发现可以做到兼容处理，再增加一个配置

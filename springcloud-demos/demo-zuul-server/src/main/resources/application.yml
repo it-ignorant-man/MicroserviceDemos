@@ -1,0 +1,32 @@
+server:
+  port: 8765
+
+eureka:
+  instance:
+    hostname: demo-zuul-server
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+spring:
+  application:
+    name: demo-zuul-server
+#  zipkin:
+#    base-url: http://192.168.2.120:9411
+#    sender:
+#      type: web
+#  sleuth:
+#    sampler:
+#      probability: 1.0  # ²ÉÑùÂÊ
+
+zuul:
+  routes:
+    eureka-client-consumer:
+      path: /eureka-consumer/**
+      service-id: client-eureka-consumer
+    eureka-client-provider:
+      service-id: client-eureka-provider
+      path: /eureka-provider/**

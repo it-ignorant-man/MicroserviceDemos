@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: springboot-nacos-provider
+  main:
+    allow-bean-definition-overriding: true
+
+dubbo:
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: nacos://192.168.3.161:30795
+    parameters:
+      namespace: trade-yk-1216
+      group: test
